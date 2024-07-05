@@ -1,6 +1,8 @@
 import streamlit as st
-
+import os
 from knowledge_gpt.components.sidebar import sidebar
+from io import BytesIO
+
 
 from knowledge_gpt.ui import (
     wrap_doc_in_html,
@@ -43,19 +45,48 @@ if not openai_api_key:
         " https://platform.openai.com/account/api-keys."
     )
 
+file_types = ["pdf", "docx", "txt"]
+file_path = "/Users/nimesh/Downloads/content/data/pdf/"  # Replace with your actual directory path
 
+file_name = st.selectbox("Select a file to upload", os.listdir(file_path), index=0)
+
+if file_name:
+    file_extension = file_name.split(".")[-1]
+    if file_extension in file_types:
+        file_full_path = os.path.join(file_path, file_name)
+        if os.path.exists(file_full_path):  # Check if file exists
+            try:
+                with open(file_full_path, "rb") as f:
+                    file_content = f.read()
+                
+                # Create BytesIO object
+                uploaded_file = BytesIO(file_content)
+                uploaded_file.name = file_name  # Set the name attribute
+                
+                st.success(f"Successfully loaded file: {file_name}")
+            except Exception as e:
+                st.error(f"Error reading file: {e}")
+        else:
+            st.error(f"File '{file_name}' not found in directory '{file_path}'")
+    else:
+        st.error("Unsupported file type. Please select a PDF, DOCX, or TXT file.")
+else:
+    st.warning("Please select a file to upload.")
+
+
+
+"""
 uploaded_file = st.file_uploader(
     "Upload a pdf, docx, or txt file",
     type=["pdf", "docx", "txt"],
     help="Scanned documents are not supported yet!",
 )
-
+"""
 model: str = st.selectbox("Model", options=MODEL_LIST)  # type: ignore
 
 with st.expander("Advanced Options"):
     return_all_chunks = st.checkbox("Show all chunks retrieved from vector search")
     show_full_doc = st.checkbox("Show parsed contents of the document")
-
 
 if not uploaded_file:
     st.stop()

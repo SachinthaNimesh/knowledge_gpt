@@ -36,7 +36,7 @@ class FolderIndex:
         """Creates an index from files."""
 
         all_docs = cls._combine_files(files)
-
+# mark this point 
         index = vector_store.from_documents(
             documents=all_docs,
             embedding=embeddings,
