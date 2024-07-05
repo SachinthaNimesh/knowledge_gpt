@@ -46,7 +46,7 @@ if not openai_api_key:
     )
 
 file_types = ["pdf", "docx", "txt"]
-file_path = "/Users/nimesh/Downloads/content/data/pdf/"  # Replace with your actual directory path
+file_path = "/Users/nimesh/Downloads/content/data/"  # Replace with your actual directory path
 
 file_name = st.selectbox("Select a file to upload", os.listdir(file_path), index=0)
 
